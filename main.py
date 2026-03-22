@@ -27,18 +27,24 @@ validated_env_vars = EnvVars.model_validate(
 )
 
 
+class GetWeatherResponse(BaseModel):
+    city: str
+    temperature: float
+    description: str
+
+
 @tool(
     description="Return weather information for a given city",
     name_or_callable="get_weather",
     return_direct=False,
 )
-def get_weather(city: str) -> None:
-    response = requests.get(
-        f"https://wttr.in/{city}?format=j1",
+def get_weather(city: str) -> GetWeatherResponse:
+    # TODO: use a real weather API here, this is just a placeholder
+    return GetWeatherResponse(
+        city=city,
+        description="It's always sunny!",
+        temperature=25.0,
     )
-
-    # TODO: use Pydantic to validate the response
-    return response.json()
 
 
 llm = ChatOpenAI(
