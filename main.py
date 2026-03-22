@@ -68,7 +68,7 @@ user_message = HumanMessage(
 agent_response = agent.invoke(
     input={
         "messages": [
-            user_message.model_dump(),
+            user_message,
         ]
     }
 )
