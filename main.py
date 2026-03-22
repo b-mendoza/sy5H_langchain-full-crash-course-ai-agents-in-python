@@ -3,6 +3,7 @@ from langchain.agents import create_agent
 from langchain.messages import AnyMessage, HumanMessage
 from langchain.tools import ToolRuntime, tool
 from langchain_openai.chat_models import ChatOpenAI
+from langgraph.checkpoint.memory import InMemorySaver
 from pydantic import BaseModel, SecretStr
 
 ENV_VARS_FILE_PATH = ".env"
@@ -28,6 +29,13 @@ validated_env_vars = EnvVars.model_validate(
 
 class AgentContext(BaseModel):
     user_id: str
+
+
+class AgentResponseFormat(BaseModel):
+    humidity: float
+    summary: str
+    temperature_in_celsius: float
+    temperature_in_fahrenheit: float
 
 
 class GetWeatherResponse(BaseModel):
@@ -66,15 +74,20 @@ def locate_user(runtime: ToolRuntime[AgentContext]) -> str:
             return "Unknown location"
 
 
-llm = ChatOpenAI(
+model = ChatOpenAI(
     api_key=validated_env_vars.OPENAI_API_KEY,
     model="gpt-4.1-mini-2025-04-14",
+    temperature=0.3,
 )
+
+checkpointer = InMemorySaver()
 
 
 agent = create_agent(
+    checkpointer=checkpointer,
     context_schema=AgentContext,
-    model=llm,
+    model=model,
+    response_format=AgentResponseFormat,
     system_prompt=SYSTEM_PROMPT,
     tools=[get_weather],
 )
@@ -90,7 +103,7 @@ agent_response = agent.invoke(
         "messages": [
             user_message,
         ]
-    }
+    },
 )
 
 
