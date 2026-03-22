@@ -29,8 +29,8 @@ validated_env_vars = EnvVars.model_validate(
 
 class GetWeatherResponse(BaseModel):
     city: str
-    temperature: float
     description: str
+    temperature: float
 
 
 @tool(
