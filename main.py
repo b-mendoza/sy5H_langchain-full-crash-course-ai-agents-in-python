@@ -1,6 +1,6 @@
 from dotenv import dotenv_values
 from langchain.agents import create_agent
-from langchain.messages import AnyMessage, HumanMessage
+from langchain.messages import HumanMessage
 from langchain.tools import ToolRuntime, tool
 from langchain_core.runnables import RunnableConfig
 from langchain_openai.chat_models import ChatOpenAI
@@ -118,23 +118,15 @@ agent_response = agent.invoke(
             user_message,
         ]
     },
+    version="v2",
 )
 
+structured_response = agent_response.value.get("structured_response")
 
-class AgentResponse(BaseModel):
-    messages: list[AnyMessage]
-
-
-print(
-    "RAW agent response:",
-    agent_response,
-)
-
-validated_agent_response = AgentResponse.model_validate(
-    agent_response,
-)
-
-last_message_content = validated_agent_response.messages[-1].content
-
-if isinstance(last_message_content, str):
-    print(last_message_content)
+if structured_response is not None:
+    print(structured_response.summary)
+    print(structured_response.temperature_in_celsius)
+    print(
+        "RAW structured_response:",
+        structured_response,
+    )
