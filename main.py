@@ -2,6 +2,7 @@ import requests
 from dotenv import dotenv_values
 from langchain.agents import create_agent
 from langchain.tools import tool
+from langchain_core.messages import HumanMessage
 from langchain_openai.chat_models import ChatOpenAI
 from pydantic import BaseModel, SecretStr
 
@@ -52,13 +53,16 @@ agent = create_agent(
     tools=[get_weather],
 )
 
+
+user_message = HumanMessage(
+    content="What's the weather like in New York City?",
+)
+
+
 agent_response = agent.invoke(
-    {
+    input={
         "messages": [
-            {
-                "role": "user",
-                "content": "What's the weather like in New York City?",
-            }
+            user_message.model_dump(),
         ]
     }
 )
