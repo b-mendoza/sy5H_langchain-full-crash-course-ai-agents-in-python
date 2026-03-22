@@ -1,16 +1,9 @@
 from dotenv import dotenv_values
-from langchain.agents import create_agent
 from langchain.messages import HumanMessage
-from langchain.tools import ToolRuntime, tool
-from langchain_core.runnables import RunnableConfig
 from langchain_openai.chat_models import ChatOpenAI
-from langgraph.checkpoint.memory import InMemorySaver
 from pydantic import BaseModel, SecretStr
 
 ENV_VARS_FILE_PATH = ".env"
-
-SYSTEM_PROMPT = """You are a helpful weather assistant who always cracks jokes 
-and is humorous while remaining helpful."""
 
 
 class EnvVars(BaseModel):
