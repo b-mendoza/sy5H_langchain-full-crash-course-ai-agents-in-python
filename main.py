@@ -82,9 +82,10 @@ class AgentResponse(BaseModel):
     messages: list[AgentResponseMessage]
 
 
+print("RAW agent response:", agent_response)
+
 validated_agent_response = AgentResponse.model_validate(
     agent_response,
 )
 
-print(validated_agent_response)
 print(validated_agent_response.messages[-1].content)
