@@ -135,3 +135,54 @@ if structured_response is not None:
         "RAW structured_response:",
         structured_response,
     )
+
+# The user follows up with another question, and we want to see the agent's
+# response in the context of the previous conversation.
+#
+# The agent should NOT have access to the previous conversation's state because
+# we're using a new "thread_id" in the config. This is intentional to
+# demonstrate how the agent responds without prior context.
+
+follow_up_message = HumanMessage(
+    # It seems like if we start arguing with the agent and steering to think he
+    # previously said the weather is always sunny but it didn't match reality, the
+    # agent's completion will not match the response_format and the application
+    # will throw.
+    content="""You told me the weather would be very cold and rainy, but I see
+    it's sunny and warm outside. Why?"""
+    # But if we ask a follow-up question that is not directly contradicting the
+    # previous response, the agent should be able to answer it without any
+    # issues.
+    # content="Is this weather good for a picnic?",
+)
+
+
+new_config = RunnableConfig(
+    configurable=AgentRuntimeConfig(
+        thread_id=2,
+    ).model_dump(),
+)
+
+agent_response = agent.invoke(
+    config=new_config,
+    context=AgentContext(
+        user_id="ABC123",
+    ),
+    input={
+        "messages": [
+            follow_up_message,
+        ]
+    },
+    version="v2",
+)
+
+
+structured_response = agent_response.value.get("structured_response")
+
+if structured_response is not None:
+    print(structured_response.summary)
+    print(structured_response.temperature_in_celsius)
+    print(
+        "RAW structured_response:",
+        structured_response,
+    )
