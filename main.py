@@ -1,7 +1,7 @@
 from dotenv import dotenv_values
 from langchain.agents import create_agent
 from langchain.messages import AnyMessage, HumanMessage
-from langchain.tools import tool
+from langchain.tools import ToolRuntime, tool
 from langchain_openai.chat_models import ChatOpenAI
 from pydantic import BaseModel, SecretStr
 
@@ -26,6 +26,10 @@ validated_env_vars = EnvVars.model_validate(
 )
 
 
+class AgentContext(BaseModel):
+    user_id: str
+
+
 class GetWeatherResponse(BaseModel):
     city: str
     description: str
@@ -46,6 +50,22 @@ def get_weather(city: str) -> GetWeatherResponse:
     )
 
 
+@tool(
+    description="Locate the user based on the context",
+    name_or_callable="locate_user",
+)
+def locate_user(runtime: ToolRuntime[AgentContext]) -> str:
+    match runtime.context.user_id:
+        case "ABC123":
+            return "New York City"
+        case "XYZ456":
+            return "San Francisco"
+        case "HJKL111":
+            return "Los Angeles"
+        case _:
+            return "Unknown location"
+
+
 llm = ChatOpenAI(
     api_key=validated_env_vars.OPENAI_API_KEY,
     model="gpt-4.1-mini-2025-04-14",
@@ -53,6 +73,7 @@ llm = ChatOpenAI(
 
 
 agent = create_agent(
+    context_schema=AgentContext,
     model=llm,
     system_prompt=SYSTEM_PROMPT,
     tools=[get_weather],
