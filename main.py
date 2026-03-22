@@ -67,5 +67,18 @@ agent_response = agent.invoke(
     }
 )
 
-print(agent_response)
-print(agent_response.messages[-1].content)
+
+class AgentResponseMessage(BaseModel):
+    content: str
+
+
+class AgentResponse(BaseModel):
+    messages: list[AgentResponseMessage]
+
+
+validated_agent_response = AgentResponse.model_validate(
+    agent_response,
+)
+
+print(validated_agent_response)
+print(validated_agent_response.messages[-1].content)
