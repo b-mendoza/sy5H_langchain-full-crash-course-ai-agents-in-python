@@ -136,23 +136,16 @@ if structured_response is not None:
         structured_response,
     )
 
-# The user follows up with another question, and we want to see the agent's
-# response in the context of the previous conversation.
-#
-# The agent should NOT have access to the previous conversation's state because
-# we're using a new "thread_id" in the config. This is intentional to
-# demonstrate how the agent responds without prior context.
+# Follow-up question, but with a different "thread_id" so the agent won't
+# have the previous conversation. We do this on purpose to see how it
+# responds without knowing what was said before.
 
 follow_up_message = HumanMessage(
-    # It seems like if we start arguing with the agent and steering to think he
-    # previously said the weather is always sunny but it didn't match reality, the
-    # agent's completion will not match the response_format and the application
-    # will throw.
+    # If we contradict the agent (e.g. "you said it would be cold but it's
+    # sunny"), the completion breaks the response_format and the app crashes.
     content="""You told me the weather would be very cold and rainy, but I see
     it's sunny and warm outside. Why?"""
-    # But if we ask a follow-up question that is not directly contradicting the
-    # previous response, the agent should be able to answer it without any
-    # issues.
+    # A non-contradicting follow-up works fine though.
     # content="Is this weather good for a picnic?",
 )
 
