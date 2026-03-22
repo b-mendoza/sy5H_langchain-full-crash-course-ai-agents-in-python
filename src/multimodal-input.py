@@ -23,8 +23,8 @@ validated_env_vars = EnvVars.model_validate(
 )
 
 model = ChatOpenAI(
-    model="gpt-4.1-mini-2025-04-14",
     api_key=validated_env_vars.OPENAI_API_KEY,
+    model="gpt-4.1-mini-2025-04-14",
 )
 
 base64_image_message: ImageContentBlock
@@ -57,7 +57,9 @@ message = HumanMessage(
 )
 
 model_completion = model.invoke(
-    input=[message],
+    input=[
+        message,
+    ],
 )
 
 completion_content = model_completion.content
