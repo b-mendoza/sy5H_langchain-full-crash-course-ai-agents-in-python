@@ -51,7 +51,7 @@ class GetWeatherResponse(BaseModel):
     return_direct=False,
 )
 def get_weather(city: str) -> GetWeatherResponse:
-    # TODO: use a real weather API here, this is just a placeholder
+    # TODO: replace with a real weather API, this is hardcoded for now
     return GetWeatherResponse(
         city=city,
         description="It's always sunny!",
@@ -136,16 +136,16 @@ if structured_response is not None:
         structured_response,
     )
 
-# Follow-up question, but with a different "thread_id" so the agent won't
-# have the previous conversation. We do this on purpose to see how it
-# responds without knowing what was said before.
+# Ask a follow-up using a different thread_id so the agent has no memory
+# of the previous conversation. We want to see how it handles a question
+# without any prior context.
 
 follow_up_message = HumanMessage(
-    # If we contradict the agent (e.g. "you said it would be cold but it's
-    # sunny"), the completion breaks the response_format and the app crashes.
+    # Contradicting the agent (e.g. "you said cold but it's sunny") breaks
+    # the response_format and crashes the app.
     content="""You told me the weather would be very cold and rainy, but I see
     it's sunny and warm outside. Why?"""
-    # A non-contradicting follow-up works fine though.
+    # A follow-up that doesn't contradict works fine though.
     # content="Is this weather good for a picnic?",
 )
 
