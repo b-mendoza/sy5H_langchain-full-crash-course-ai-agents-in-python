@@ -1,5 +1,7 @@
+from base64 import b64encode
+
 from dotenv import dotenv_values
-from langchain.messages import HumanMessage
+from langchain.messages import HumanMessage, ImageContentBlock
 from langchain_openai.chat_models import ChatOpenAI
 from pydantic import BaseModel, SecretStr
 
@@ -25,16 +27,32 @@ model = ChatOpenAI(
     api_key=validated_env_vars.OPENAI_API_KEY,
 )
 
+base64_image_message: ImageContentBlock
+
+# We use a context manager to ensure the file is properly closed after reading
+with open("animal_facts-e1396431549968.jpg", "rb") as image_file:
+    base64_image_message = ImageContentBlock(
+        {
+            "type": "image",
+            "base64": b64encode(image_file.read()).decode(),
+            "mime_type": "image/jpeg",
+        },
+    )
+
+
 message = HumanMessage(
-    content=[
+    content_blocks=[
         {
             "type": "text",
             "text": "Describe the content of this image",
         },
-        {
-            "type": "image",
-            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/640px-PNG_transparency_demonstration_1.png",
-        },
+        # Using a URL to an image is supported
+        # {
+        #     "type": "image",
+        #     "url": "https://africanoverlandtours.com/wp-content/uploads/2025/04/animal_facts-e1396431549968.jpg",
+        # },
+        # Using a base64 encoded image is also supported
+        base64_image_message,
     ]
 )
 
