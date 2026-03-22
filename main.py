@@ -2,6 +2,7 @@ from dotenv import dotenv_values
 from langchain.agents import create_agent
 from langchain.messages import AnyMessage, HumanMessage
 from langchain.tools import ToolRuntime, tool
+from langchain_core.runnables import RunnableConfig
 from langchain_openai.chat_models import ChatOpenAI
 from langgraph.checkpoint.memory import InMemorySaver
 from pydantic import BaseModel, SecretStr
@@ -100,8 +101,15 @@ user_message = HumanMessage(
     content="What's the weather like?",
 )
 
+config = RunnableConfig(
+    configurable={
+        "thread_id": 1,
+    }
+)
+
 
 agent_response = agent.invoke(
+    config=config,
     context=AgentContext(
         user_id="ABC123",
     ),
