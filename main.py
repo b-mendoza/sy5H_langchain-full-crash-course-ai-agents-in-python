@@ -1,8 +1,8 @@
 import requests
 from dotenv import dotenv_values
 from langchain.agents import create_agent
+from langchain.messages import AnyMessage, HumanMessage
 from langchain.tools import tool
-from langchain_core.messages import HumanMessage
 from langchain_openai.chat_models import ChatOpenAI
 from pydantic import BaseModel, SecretStr
 
@@ -74,12 +74,8 @@ agent_response = agent.invoke(
 )
 
 
-class AgentResponseMessage(BaseModel):
-    content: str
-
-
 class AgentResponse(BaseModel):
-    messages: list[AgentResponseMessage]
+    messages: list[AnyMessage]
 
 
 print("RAW agent response:", agent_response)
@@ -88,4 +84,7 @@ validated_agent_response = AgentResponse.model_validate(
     agent_response,
 )
 
-print(validated_agent_response.messages[-1].content)
+last_message_content = validated_agent_response.messages[-1].content
+
+if isinstance(last_message_content, str):
+    print(last_message_content)
