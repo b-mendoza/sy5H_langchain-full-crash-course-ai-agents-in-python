@@ -101,10 +101,15 @@ user_message = HumanMessage(
     content="What's the weather like?",
 )
 
+
+class AgentRuntimeConfig(BaseModel):
+    thread_id: int
+
+
 config = RunnableConfig(
-    configurable={
-        "thread_id": 1,
-    }
+    configurable=AgentRuntimeConfig(
+        thread_id=1,
+    ).model_dump(),
 )
 
 
