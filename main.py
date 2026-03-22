@@ -1,23 +1,29 @@
 import requests
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_openai.chat_models import ChatOpenAI
-from pydantic import BaseModel
+from pydantic import BaseModel, SecretStr
 
-ENV_FILE_PATH = ".env"
+ENV_VARS_FILE_PATH = ".env"
 
 SYSTEM_PROMPT = """You are a helpful weather assistant who always cracks jokes 
 and is humorous while remaining helpful."""
 
-has_successfully_loaded_env = load_dotenv(
-    dotenv_path=ENV_FILE_PATH,
-)
 
-if not has_successfully_loaded_env:
-    raise RuntimeError(
-        f'Failed to load environment variables from "{ENV_FILE_PATH}" file.',
+class EnvVars(BaseModel):
+    ANTHROPIC_API_KEY: SecretStr
+    GEMINI_API_KEY: SecretStr
+    MISTRAL_API_KEY: SecretStr
+    OPENAI_API_KEY: SecretStr
+    WEATHER_API_KEY: SecretStr
+
+
+validated_env_vars = EnvVars.model_validate(
+    dotenv_values(
+        dotenv_path=ENV_VARS_FILE_PATH,
     )
+)
 
 
 @tool(
@@ -35,6 +41,7 @@ def get_weather(city: str) -> None:
 
 
 llm = ChatOpenAI(
+    api_key=validated_env_vars.OPENAI_API_KEY,
     model="gpt-4.1-mini-2025-04-14",
 )
 
