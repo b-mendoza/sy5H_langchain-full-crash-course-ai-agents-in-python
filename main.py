@@ -1,4 +1,3 @@
-import requests
 from dotenv import dotenv_values
 from langchain.agents import create_agent
 from langchain.messages import AnyMessage, HumanMessage
