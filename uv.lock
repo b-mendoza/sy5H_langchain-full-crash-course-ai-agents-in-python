@@ -602,6 +602,7 @@ dependencies = [
     { name = "langchain-google-genai" },
     { name = "langchain-mistralai" },
     { name = "langchain-openai" },
+    { name = "pydantic" },
     { name = "python-dotenv" },
 ]
 
@@ -618,6 +619,7 @@ requires-dist = [
     { name = "langchain-google-genai", specifier = ">=4.2.1" },
     { name = "langchain-mistralai", specifier = ">=1.1.2" },
     { name = "langchain-openai", specifier = ">=1.1.11" },
+    { name = "pydantic", specifier = ">=2.12.5" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
 ]
 
