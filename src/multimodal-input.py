@@ -56,6 +56,11 @@ message = HumanMessage(
     ]
 )
 
-response = model.invoke(
-    input=message,
+model_completion = model.invoke(
+    input=[message],
 )
+
+completion_content = model_completion.content
+
+if isinstance(completion_content, str):
+    print(completion_content)
