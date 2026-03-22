@@ -89,16 +89,22 @@ agent = create_agent(
     model=model,
     response_format=AgentResponseFormat,
     system_prompt=SYSTEM_PROMPT,
-    tools=[get_weather],
+    tools=[
+        get_weather,
+        locate_user,
+    ],
 )
 
 
 user_message = HumanMessage(
-    content="What's the weather like in New York City?",
+    content="What's the weather like?",
 )
 
 
 agent_response = agent.invoke(
+    context=AgentContext(
+        user_id="ABC123",
+    ),
     input={
         "messages": [
             user_message,
