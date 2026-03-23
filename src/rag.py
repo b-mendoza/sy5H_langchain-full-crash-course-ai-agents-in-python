@@ -40,16 +40,8 @@ vector_store = FAISS.from_texts(
     embedding=embeddings,
 )
 
-# print(
-#     vector_store.similarity_search(
-#         k=7,
-#         query="Apples are my favority food.",
-#     )
-# )
-
-print(
-    vector_store.similarity_search(
-        k=7,
-        query="Linux is a great operating system.",
-    )
+retriever = vector_store.as_retriever(
+    search_kwargs={
+        "k": 3,
+    }
 )
