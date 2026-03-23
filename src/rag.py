@@ -1,5 +1,6 @@
 from dotenv import dotenv_values
 from langchain_community.vectorstores import FAISS
+from langchain_core.tools import create_retriever_tool
 from langchain_openai.embeddings import OpenAIEmbeddings
 from pydantic import BaseModel, SecretStr
 
@@ -44,4 +45,11 @@ retriever = vector_store.as_retriever(
     search_kwargs={
         "k": 3,
     }
+)
+
+retriever_tool = create_retriever_tool(
+    description="""Search the small product / fruit knowledge base for relevant
+    information.""",
+    name="kb_search",
+    retriever=retriever,
 )
